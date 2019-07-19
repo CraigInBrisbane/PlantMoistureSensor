@@ -1,6 +1,8 @@
+#include "ArduinoDeviceLibraries/FadingLED.h"
+
 int PIN_Sensor =      A0;
-int PIN_Power =       D7;
-int PIN_WarnLed =     D8;
+int PIN_Power =       7;
+int PIN_WarnLed =     8;
 
 void setup() {
   // Setup PIN Modes.
