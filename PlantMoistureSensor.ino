@@ -2,11 +2,11 @@
 
 // Configurable settings.
 int   PIN_Sensor =        A0;     // PIN to which the Sensor Signal wire is connected.
-int   PIN_Power =         7;      // PIN which we will power the sensor from. Not using 5V, to lessen corrosion and allow for power saving (Switch off and on)
+int   PIN_Power =         6;      // PIN which we will power the sensor from. Not using 5V, to lessen corrosion and allow for power saving (Switch off and on)
 int   PIN_WarnLED =       3;      // PIN to which the LED Indicator will connect. This will flash when the sensor is below a definded value.
 bool  DebugMode =         true;   // If Debug is enabled, we will be logging data to the serial port.
-int   PollingInterval =   1000;   // Time in milliseconds when the sensor will be polled for a reading.
-int   LowLevelReading =   580;    // The low value which will enable the warning LED. i.e. The low value for "Plant needs water!"
+int   PollingInterval =   5000;   // Time in milliseconds when the sensor will be polled for a reading.
+int   LowLevelReading =   550;    // The low value which will enable the warning LED. i.e. The low value for "Plant needs water!"
 
 // Define the Soil Sensor and variable for the last value.
 SoilSensor                sensor;
@@ -35,14 +35,15 @@ void loop() {
   // Check the sensor value.
   int newVal = sensor.Update();
   
-  if(DebugMode) {
-    Serial.print("Recieved value from sensor: ");
-    Serial.println(newVal);
-  }
-
+ 
   if(newVal != -1) { // Sensor returns -1 if it thinks it doesn't need to read yet, or isn't setup.
-  
-    if(newVal != SensorValue) {
+    Serial.println(IsWarningState);
+    if(DebugMode) {
+      Serial.print("Recieved value from sensor: ");
+      Serial.println(newVal);
+    }
+
+   if(newVal != SensorValue) {
       SensorValue = newVal;
     
       // Are we entering a warning state?    
