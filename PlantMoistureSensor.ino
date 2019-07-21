@@ -1,4 +1,5 @@
 #include "ArduinoDeviceLibraries/SoilSensor.h"
+#include "ArduinoDeviceLibraries/FlashingLed.h"
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -15,12 +16,13 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 int   PIN_Sensor =        A0;     // PIN to which the Sensor Signal wire is connected.
 int   PIN_Power =         6;      // PIN which we will power the sensor from. Not using 5V, to lessen corrosion and allow for power saving (Switch off and on)
 int   PIN_WarnLED =       3;      // PIN to which the LED Indicator will connect. This will flash when the sensor is below a definded value.
-bool  DebugMode =         true;   // If Debug is enabled, we will be logging data to the serial port.
+bool  DebugMode =         false;   // If Debug is enabled, we will be logging data to the serial port.
 int   PollingInterval =   5000;   // Time in milliseconds when the sensor will be polled for a reading.
 int   LowLevelReading =   600;    // The low value which will enable the warning LED. i.e. The low value for "Plant needs water!"
 
 // Define the Soil Sensor and variable for the last value.
 SoilSensor                sensor;
+FlashingLed               led;
 int SensorValue =         0;
 bool IsWarningState =     false;
 
@@ -61,15 +63,13 @@ void setup() {
 
   
   display.display();  
-  
- // display.drawPixel(64, 16, WHITE);
- 
- // display.display();
   delay(500); // Pause for 2 seconds
 
   // Clear the buffer
   display.clearDisplay();
-  
+
+
+  led.Init(PIN_WarnLED, 100, 5000);
   sensor.Init(PIN_Sensor, PIN_Power, PollingInterval);
   sensor.SetDebugMode(DebugMode);
   
@@ -83,6 +83,7 @@ void setup() {
 
 void loop() {
 
+  led.Update();
   // Check the sensor value.
   int newVal = sensor.Update();
   
@@ -115,7 +116,8 @@ void loop() {
           Serial.println("Low level detected. Enabling Warning LED");
         }
         IsWarningState = true;
-        digitalWrite(PIN_WarnLED, HIGH);
+        led.On();
+        //digitalWrite(PIN_WarnLED, HIGH);
       }
     
       // Are we exiting a warning state?    
@@ -124,7 +126,8 @@ void loop() {
           Serial.println("Low level no longer detected. Disabling Warning LED");
         }
         IsWarningState=false;
-        digitalWrite(PIN_WarnLED, LOW);  
+        led.Off();
+        //digitalWrite(PIN_WarnLED, LOW);  
       }   
     }
 
@@ -134,7 +137,7 @@ void loop() {
       display.setCursor(1,1);
       display.println("Warning!");   
     }
-    
+    led.Update();
     display.display(); 
   }
 }
