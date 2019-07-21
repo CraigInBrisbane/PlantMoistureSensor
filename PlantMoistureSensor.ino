@@ -68,7 +68,6 @@ void setup() {
   // Clear the buffer
   display.clearDisplay();
 
-
   led.Init(PIN_WarnLED, 100, 5000);
   sensor.Init(PIN_Sensor, PIN_Power, PollingInterval);
   sensor.SetDebugMode(DebugMode);
@@ -99,13 +98,10 @@ void loop() {
     display.setCursor(48, 15);
     // Display static text
     display.println(newVal);
-
     
     display.setTextSize(1);
     display.setCursor(105,1);
     display.println(LowLevelReading);
-
-
 
     if(newVal != SensorValue) {
       SensorValue = newVal;
@@ -117,7 +113,6 @@ void loop() {
         }
         IsWarningState = true;
         led.On();
-        //digitalWrite(PIN_WarnLED, HIGH);
       }
     
       // Are we exiting a warning state?    
@@ -127,10 +122,8 @@ void loop() {
         }
         IsWarningState=false;
         led.Off();
-        //digitalWrite(PIN_WarnLED, LOW);  
       }   
     }
-
     
     if(IsWarningState) {  
       display.setTextSize(1);
